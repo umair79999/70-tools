@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>All In One Tool</title>
+    <style>
+        /* Basic Reset and Font */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5; /* Light grey background for contrast */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0; /* Add some padding top/bottom */
+        }
+
+        /* Phone Mockup Container */
+        .phone-container {
+            width: 380px; /* Typical phone width */
+            height: 800px; /* Typical phone height */
+            background-color: #ffffff;
+            border-radius: 40px; /* Rounded corners for phone */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden; /* Clip content to phone shape */
+            position: relative;
+            border: 10px solid #111; /* Phone bezel */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* App Screen Area */
+        .app-screen {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa; /* Light background inside app */
+            overflow-y: auto; /* Allow scrolling for content */
+            position: relative; /* Needed for absolute positioning of file transfer screen */
+        }
+        /* Hide scrollbar */
+         .app-screen::-webkit-scrollbar {
+            display: none; /* WebKit browsers */
+        }
+        .app-screen {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+
+        /* App Header */
+        .app-header {
+            background-color: #004d40; /* Dark teal color from screenshot */
+            color: white;
+            padding: 15px 20px;
+            padding-top: 30px; /* More padding at the top */
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .header-logo {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        .header-logo .logo-a {
+            color: #ff5252; /* Red color for 'A' */
+            margin-right: 5px;
+            font-style: italic;
+        }
+
+        .header-menu-icon {
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .header-welcome {
+            font-size: 0.9em;
+            color: #b0bec5; /* Lighter text color */
+            margin-bottom: 15px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            padding: 0 20px 15px 20px; /* Padding inside header */
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 40px 12px 20px; /* Space for icon */
+            border-radius: 25px; /* Fully rounded */
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+            color: white;
+            font-size: 1em;
+        }
+
+        .search-bar input::placeholder {
+            color: #b0bec5;
+            opacity: 1;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b0bec5;
+            font-size: 1.2em;
+        }
+
+        /* Tool Sections */
+        .tool-section {
+            padding: 15px 15px 5px 15px; /* Reduced bottom padding */
+        }
+
+        .section-header {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+        .section-edit-icon {
+            color: #888;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+
+        /* Tool Grid */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 columns */
+            gap: 15px; /* Spacing between tools */
+        }
+
+        /* Individual Tool Item */
+        .tool-item {
+            background-color: #ffffff;
+            border-radius: 15px; /* Rounded corners for tools */
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .tool-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-icon {
+            font-size: 1.8em; /* Size of the icon/emoji */
+            margin-bottom: 8px;
+            height: 40px; /* Fixed height for alignment */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Specific icon styling if needed */
+        .tool-icon.add {
+            font-size: 2.5em;
+            color: #aaa;
+        }
+
+
+        .tool-label {
+            font-size: 0.75em; /* Smaller text for labels */
+            color: #555;
+            line-height: 1.2;
+             /* Prevent text wrapping */
+            white-space: normal;
+            display: block; /* Ensure it takes block space */
+             word-wrap: break-word; /* Allow breaking long words if necessary */
+             min-height: 2.4em; /* Reserve space for two lines */
+             display: flex;
+             align-items: center; /* Vertically center */
+             justify-content: center; /* Horizontally center */
+        }
+
+        /* File Transfer Screen Specific Styles */
+        .file-transfer-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff; /* White background */
+            z-index: 10; /* Make sure it's on top */
+            display: none; /* Hidden by default */
+            flex-direction: column;
+        }
+
+        .file-transfer-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            padding-top: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .back-button {
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .file-transfer-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .history-icon {
+            font-size: 1.3em;
+            cursor: pointer;
+        }
+
+        .file-transfer-content {
+            padding: 30px 20px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-circle-container {
+             margin-bottom: 30px;
+             position: relative;
+             width: 150px;
+             height: 150px;
+             margin-left: auto;
+             margin-right: auto;
+        }
+
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 10px solid #e6e6e6; /* Background track */
+            border-top-color: #2196F3; /* Progress color */
+            animation: spin 1s linear infinite; /* Simple spinning animation for demo */
+            position: relative;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             flex-direction: column;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        /* Static representation - replace animation with border calculation for real progress */
+
+
+        .progress-percentage {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+             position: absolute; /* Position inside circle */
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -70%); /* Adjust vertical position */
+        }
+         .progress-fraction {
+             font-size: 0.9em;
+             color: #777;
+             position: absolute; /* Position inside circle */
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, 20%); /* Adjust vertical position */
+        }
+
+
+        .file-list {
+            text-align: left;
+            margin-top: 20px;
+            flex-grow: 1; /* Take remaining space */
+             overflow-y: auto; /* Scroll if many files */
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .file-icon {
+            font-size: 1.8em;
+            margin-right: 15px;
+            color: #555;
+        }
+
+        .file-details {
+            flex-grow: 1;
+        }
+
+        .file-name {
+            font-size: 0.9em;
+            color: #333;
+            margin-bottom: 5px;
+            word-break: break-all; /* Handle long names */
+        }
+
+        .file-progress-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden; /* Clip the inner bar */
+        }
+
+        .file-progress {
+            height: 100%;
+            background-color: #4CAF50; /* Green progress */
+            width: 100%; /* Show 100% for demo */
+            border-radius: 3px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <!-- Main App Screen -->
+        <div class="app-screen" id="mainScreen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="header-logo">
+                        <span class="logo-a">A</span> All tools
+                    </div>
+                    <div class="header-menu-icon">⋮</div>
+                </div>
+                <div class="header-welcome">Welcome to all tools,</div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for tools..">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+
+            <!-- Instant Tools Section -->
+            <div class="tool-section">
+                 <div class="section-header">
+                    <div class="section-title">Instant tools</div>
+                    <div class="section-edit-icon">✎</div>
+                </div>
+                <div class="tool-grid">
+                    <div class="tool-item" data-tool-name="Cam Scanner">
+                        <div class="tool-icon">📷</div>
+                        <span class="tool-label">Cam Scanner</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Stop motion animation">
+                        <div class="tool-icon">🎬</div>
+                        <span class="tool-label">Stop motion animation</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Steps">
+                        <div class="tool-icon">🚶</div>
+                        <span class="tool-label">Steps</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Add Tool">
+                        <div class="tool-icon add">+</div>
+                        <span class="tool-label">Add</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WiFi Utility Section -->
+            <div class="tool-section">
+                <div class="section-header">
+                    <div class="section-title">WiFi Utility</div>
+                 </div>
+                <div class="tool-grid">
+                    <div class="tool-item" id="fileTransferTool" data-tool-name="File Transfer">
+                        <div class="tool-icon">↔️</div>
+                        <span class="tool-label">File Transfer</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Music Group">
+                        <div class="tool-icon">🎵</div>
+                        <span class="tool-label">Music Group</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Cctv">
+                        <div class="tool-icon">👁️</div>
+                        <span class="tool-label">Cctv</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Control Device">
+                        <div class="tool-icon">💡</div>
+                        <span class="tool-label">Control Device</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Walkie Talkie">
+                        <div class="tool-icon">📻</div>
+                        <span class="tool-label">Walkie Talkie</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Wifi Calls">
+                        <div class="tool-icon">📞</div>
+                        <span class="tool-label">Wifi Calls</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="WiFi Analyzer">
+                        <div class="tool-icon">📶</div>
+                        <span class="tool-label">WiFi Analyzer</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Hotspot">
+                        <div class="tool-icon">🔥</div>
+                        <span class="tool-label">Hotspot</span>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Basic Utility Section -->
+            <div class="tool-section">
+                 <div class="section-header">
+                    <div class="section-title">Basic Utility</div>
+                 </div>
+                <div class="tool-grid">
+                    <div class="tool-item" data-tool-name="Compass">
+                        <div class="tool-icon">🧭</div>
+                        <span class="tool-label">Compass</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Level">
+                        <div class="tool-icon">📐</div>
+                        <span class="tool-label">Level</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Protractor">
+                        <div class="tool-icon">⌔</div>
+                        <span class="tool-label">Protractor</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Ruler">
+                        <div class="tool-icon">📏</div>
+                        <span class="tool-label">Ruler</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Flashlight">
+                        <div class="tool-icon">🔦</div>
+                        <span class="tool-label">Flashlight</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Mirror">
+                        <div class="tool-icon">🪞</div>
+                        <span class="tool-label">Mirror</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Magnifier">
+                        <div class="tool-icon">🔍</div>
+                        <span class="tool-label">Magnifier</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Sound Meter">
+                        <div class="tool-icon">🔊</div>
+                        <span class="tool-label">Sound Meter</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Extra Tools Section -->
+            <div class="tool-section">
+                <div class="section-header">
+                    <div class="section-title">Extra Tools</div>
+                 </div>
+                <div class="tool-grid">
+                    <div class="tool-item" data-tool-name="EMI Calculator">
+                        <div class="tool-icon">🏦</div>
+                        <span class="tool-label">EMI</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Billing System">
+                        <div class="tool-icon">🧾</div>
+                        <span class="tool-label">Billing System</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Days Counter">
+                        <div class="tool-icon">🎂</div>
+                        <span class="tool-label">Days Counter</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Unit Converter">
+                        <div class="tool-icon">🔄</div>
+                        <span class="tool-label">Unit Converter</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Stopwatch">
+                        <div class="tool-icon">⏱️</div>
+                        <span class="tool-label">Stopwatch</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Timer">
+                        <div class="tool-icon">⏳</div>
+                        <span class="tool-label">Timer</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Number Counter">
+                        <div class="tool-icon">🔢</div>
+                        <span class="tool-label">Number Counter</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Random Generator">
+                        <div class="tool-icon">🎲</div>
+                        <span class="tool-label">Random</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Generate Qr/Barcode">
+                        <div class="tool-icon">█║▌║</div> <!-- Simple barcode look -->
+                        <span class="tool-label">Generate Qr/Barcode</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Morse code">
+                        <div class="tool-icon">···−−−···</div> <!-- Morse representation -->
+                        <span class="tool-label">Morse code</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Bluetooth Controller">
+                        <div class="tool-icon">🎮</div>
+                        <span class="tool-label">Bluetooth Controller</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="File locker">
+                        <div class="tool-icon">🔒</div>
+                        <span class="tool-label">File locker</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Calculator">
+                        <div class="tool-icon">➕</div>
+                        <span class="tool-label">Calculator</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Device info">
+                        <div class="tool-icon">ℹ️</div>
+                        <span class="tool-label">Device info</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Screen Recorder">
+                        <div class="tool-icon">🔴</div>
+                        <span class="tool-label">Screen Recorder</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Notes">
+                        <div class="tool-icon">📝</div>
+                        <span class="tool-label">Notes</span>
+                    </div>
+                     <!-- Add more placeholder tools to reach 70+ -->
+                    <div class="tool-item" data-tool-name="Tool 17">
+                        <div class="tool-icon">⚙️</div>
+                        <span class="tool-label">Tool 17</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Tool 18">
+                        <div class="tool-icon">🔧</div>
+                        <span class="tool-label">Tool 18</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Tool 19">
+                        <div class="tool-icon">💡</div>
+                        <span class="tool-label">Tool 19</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Tool 20">
+                        <div class="tool-icon">✨</div>
+                        <span class="tool-label">Tool 20</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Currency Converter">
+                        <div class="tool-icon">💲</div>
+                        <span class="tool-label">Currency</span>
+                    </div>
+                    <div class="tool-item" data-tool-name="Age Calculator">
+                        <div class="tool-icon">👶</div>
+                        <span class="tool-label">Age Calc</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="BMI Calculator">
+                        <div class="tool-icon">💪</div>
+                        <span class="tool-label">BMI Calc</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="World Clock">
+                        <div class="tool-icon">🌍</div>
+                        <span class="tool-label">World Clock</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Color Picker">
+                        <div class="tool-icon">🎨</div>
+                        <span class="tool-label">Color Picker</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Text Editor">
+                        <div class="tool-icon">📄</div>
+                        <span class="tool-label">Text Editor</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Drawing Pad">
+                        <div class="tool-icon">🖌️</div>
+                        <span class="tool-label">Drawing Pad</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Password Gen">
+                        <div class="tool-icon">🔑</div>
+                        <span class="tool-label">Pass Gen</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="System Cleaner">
+                        <div class="tool-icon">🧹</div>
+                        <span class="tool-label">Cleaner</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Battery Info">
+                        <div class="tool-icon">🔋</div>
+                        <span class="tool-label">Battery Info</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Network Speed">
+                        <div class="tool-icon">🌐</div>
+                        <span class="tool-label">Net Speed</span>
+                    </div>
+                     <div class="tool-item" data-tool-name="Sensor Test">
+                        <div class="tool-icon">🌡️</div>
+                        <span class="tool-label">Sensor Test</span>
+                    </div>
+                     <!-- Add more items similarly until you have 70+ -->
+                     <div class="tool-item" data-tool-name="Tool 33"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 33</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 34"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 34</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 35"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 35</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 36"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 36</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 37"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 37</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 38"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 38</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 39"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 39</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 40"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 40</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 41"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 41</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 42"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 42</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 43"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 43</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 44"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 44</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 45"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 45</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 46"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 46</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 47"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 47</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 48"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 48</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 49"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 49</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 50"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 50</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 51"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 51</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 52"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 52</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 53"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 53</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 54"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 54</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 55"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 55</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 56"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 56</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 57"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 57</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 58"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 58</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 59"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 59</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 60"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 60</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 61"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 61</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 62"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 62</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 63"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 63</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 64"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 64</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 65"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 65</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 66"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 66</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 67"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 67</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 68"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 68</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 69"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 69</span> </div>
+                     <div class="tool-item" data-tool-name="Tool 70"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 70+</span> </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- File Transfer Screen (Initially Hidden) -->
+        <div class="app-screen file-transfer-screen" id="fileTransferScreen">
+            <div class="file-transfer-header">
+                <span class="back-button" id="backButton">←</span>
+                <span class="file-transfer-title">File Transfer</span>
+                <span class="history-icon">🕘</span>
+            </div>
+            <div class="file-transfer-content">
+                <div class="progress-circle-container">
+                     <div class="progress-circle" style="border-top-color: #2196F3; border-right-color: #2196F3; border-bottom-color: #e6e6e6; border-left-color: #e6e6e6; animation: none; transform: rotate(-45deg);">
+                        <!-- Static representation of 54% -->
+                        <!-- Border is used here just for visual structure -->
+                     </div>
+                     <div class="progress-percentage">54%</div>
+                     <div class="progress-fraction">0.3/0.6 MB</div>
+                 </div>
+
+                <div class="file-list">
+                    <div class="file-item">
+                        <div class="file-icon">🖼️</div>
+                        <div class="file-details">
+                            <div class="file-name">1737182013827.jpeg</div>
+                            <div class="file-progress-bar">
+                                <div class="file-progress" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="file-item">
+                        <div class="file-icon">🖼️</div>
+                        <div class="file-details">
+                            <div class="file-name">Screenshot_20250116-143938.png</div>
+                            <div class="file-progress-bar">
+                                <div class="file-progress" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="file-item">
+                        <div class="file-icon">📄</div>
+                        <div class="file-details">
+                            <div class="file-name">document_backup.zip</div>
+                            <div class="file-progress-bar">
+                                <div class="file-progress" style="width: 20%; background-color: #2196F3;"></div> <!-- Example in progress -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- End Phone Container -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainScreen = document.getElementById('mainScreen');
+            const fileTransferScreen = document.getElementById('fileTransferScreen');
+            const fileTransferTool = document.getElementById('fileTransferTool');
+            const backButton = document.getElementById('backButton');
+
+            // --- Navigation ---
+            if (fileTransferTool) {
+                fileTransferTool.addEventListener('click', () => {
+                    mainScreen.style.display = 'none';
+                    fileTransferScreen.style.display = 'flex'; // Use flex as it's a flex container
+                });
+            }
+
+            if (backButton) {
+                backButton.addEventListener('click', () => {
+                    fileTransferScreen.style.display = 'none';
+                    mainScreen.style.display = 'flex'; // Use flex as it's a flex container
+                });
+            }
+
+            // --- Tool Click Alerts (Placeholder) ---
+            const toolItems = document.querySelectorAll('.tool-item');
+
+            toolItems.forEach(item => {
+                // Don't add alert to the specific navigation items handled above
+                if (item.id !== 'fileTransferTool') {
+                    item.addEventListener('click', () => {
+                        const toolName = item.getAttribute('data-tool-name') || 'Tool';
+                        // Avoid alert for the "+" button if desired
+                        if (toolName !== 'Add Tool') {
+                           alert(`${toolName} clicked! (UI Element Only - Not Functional)`);
+                        } else {
+                             alert(`Add new tool/widget (UI Element Only - Not Functional)`);
+                        }
+                    });
+                }
+            });
+
+             // --- Make header menu icon clickable (optional alert) ---
+            const menuIcon = document.querySelector('.header-menu-icon');
+            if(menuIcon) {
+                menuIcon.addEventListener('click', () => {
+                    alert('Menu clicked! (Not Implemented)');
+                });
+            }
+            // --- Make section edit icon clickable (optional alert) ---
+            const editIcon = document.querySelector('.section-edit-icon');
+            if(editIcon) {
+                editIcon.addEventListener('click', () => {
+                    alert('Edit Instant Tools clicked! (Not Implemented)');
+                });
+            }
+             // --- Make history icon clickable (optional alert) ---
+            const historyIcon = document.querySelector('.history-icon');
+             if(historyIcon) {
+                historyIcon.addEventListener('click', () => {
+                    alert('History clicked! (Not Implemented)');
+                });
+            }
+
+
+        });
+    </script>
+
+</body>
+</html>
