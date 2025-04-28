@@ -3,343 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>All In One Tool</title>
+    <title>All In One Tool (Functional Demo)</title>
     <style>
-        /* Basic Reset and Font */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* --- Basic Reset and Font --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5; /* Light grey background for contrast */
+            background-color: #f0f2f5;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Align top */
             min-height: 100vh;
-            padding: 20px 0; /* Add some padding top/bottom */
+            padding: 20px 0;
         }
 
-        /* Phone Mockup Container */
+        /* --- Phone Mockup Container --- */
         .phone-container {
-            width: 380px; /* Typical phone width */
-            height: 800px; /* Typical phone height */
+            width: 380px;
+            max-width: 100%;
+            height: 800px;
+            max-height: 95vh; /* Limit height on smaller screens */
             background-color: #ffffff;
-            border-radius: 40px; /* Rounded corners for phone */
+            border-radius: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden; /* Clip content to phone shape */
+            overflow: hidden;
             position: relative;
-            border: 10px solid #111; /* Phone bezel */
+            border: 10px solid #111;
             display: flex;
             flex-direction: column;
         }
 
-        /* App Screen Area */
+        /* --- App Screen Area (Common) --- */
         .app-screen {
             flex-grow: 1;
-            display: flex;
+            display: flex; /* Changed to flex */
             flex-direction: column;
-            background-color: #f8f9fa; /* Light background inside app */
-            overflow-y: auto; /* Allow scrolling for content */
-            position: relative; /* Needed for absolute positioning of file transfer screen */
-        }
-        /* Hide scrollbar */
-         .app-screen::-webkit-scrollbar {
-            display: none; /* WebKit browsers */
-        }
-        .app-screen {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-
-
-        /* App Header */
-        .app-header {
-            background-color: #004d40; /* Dark teal color from screenshot */
-            color: white;
-            padding: 15px 20px;
-            padding-top: 30px; /* More padding at the top */
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .header-logo {
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-        .header-logo .logo-a {
-            color: #ff5252; /* Red color for 'A' */
-            margin-right: 5px;
-            font-style: italic;
-        }
-
-        .header-menu-icon {
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-
-        .header-welcome {
-            font-size: 0.9em;
-            color: #b0bec5; /* Lighter text color */
-            margin-bottom: 15px;
-        }
-
-        /* Search Bar */
-        .search-bar {
-            padding: 0 20px 15px 20px; /* Padding inside header */
+            background-color: #f8f9fa;
+            overflow-y: auto;
             position: relative;
         }
+        .app-screen::-webkit-scrollbar { display: none; }
+        .app-screen { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* --- App Header (Common) --- */
+        .app-header {
+            background-color: #004d40; color: white;
+            padding: 15px 20px; padding-top: 30px;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+            position: sticky; top: 0; z-index: 5; /* Make header sticky */
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .header-logo { font-size: 1.8em; font-weight: bold; }
+        .header-logo .logo-a { color: #ff5252; margin-right: 5px; font-style: italic; }
+        .header-menu-icon { font-size: 1.5em; cursor: pointer; }
+        .header-welcome { font-size: 0.9em; color: #b0bec5; margin-bottom: 15px; }
+        .search-bar { padding: 0 0 15px 0; position: relative; } /* Adjusted padding */
         .search-bar input {
-            width: 100%;
-            padding: 12px 40px 12px 20px; /* Space for icon */
-            border-radius: 25px; /* Fully rounded */
-            border: none;
-            background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
-            color: white;
-            font-size: 1em;
+            width: 100%; padding: 12px 40px 12px 20px;
+            border-radius: 25px; border: none;
+            background-color: rgba(255, 255, 255, 0.2); color: white; font-size: 1em;
+        }
+        .search-bar input::placeholder { color: #b0bec5; opacity: 1; }
+        .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #b0bec5; font-size: 1.2em; }
+
+        /* --- Main Tool Grid Container --- */
+        #mainToolGridContainer {
+             padding: 0 15px; /* Padding for the grid area */
         }
 
-        .search-bar input::placeholder {
-            color: #b0bec5;
-            opacity: 1;
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 35px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #b0bec5;
-            font-size: 1.2em;
-        }
-
-        /* Tool Sections */
-        .tool-section {
-            padding: 15px 15px 5px 15px; /* Reduced bottom padding */
-        }
-
-        .section-header {
-             display: flex;
-             justify-content: space-between;
-             align-items: center;
-             margin-bottom: 15px;
-        }
-
-        .section-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #333;
-        }
-        .section-edit-icon {
-            color: #888;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-
-
-        /* Tool Grid */
-        .tool-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 columns */
-            gap: 15px; /* Spacing between tools */
-        }
-
-        /* Individual Tool Item */
+        /* --- Tool Sections & Grid (Copied from previous) --- */
+        .tool-section { padding: 15px 0 5px 0; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .section-title { font-size: 1.1em; font-weight: 600; color: #333; }
+        .section-edit-icon { color: #888; cursor: pointer; font-size: 1.2em; }
+        .tool-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .tool-item {
-            background-color: #ffffff;
-            border-radius: 15px; /* Rounded corners for tools */
-            padding: 10px 5px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background-color: #ffffff; border-radius: 15px; padding: 10px 5px;
+            text-align: center; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; justify-content: space-between;
         }
-
-        .tool-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .tool-icon {
-            font-size: 1.8em; /* Size of the icon/emoji */
-            margin-bottom: 8px;
-            height: 40px; /* Fixed height for alignment */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        /* Specific icon styling if needed */
-        .tool-icon.add {
-            font-size: 2.5em;
-            color: #aaa;
-        }
-
-
+        .tool-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .tool-icon { font-size: 1.8em; margin-bottom: 8px; height: 40px; display: flex; justify-content: center; align-items: center; }
+        .tool-icon.add { font-size: 2.5em; color: #aaa; }
         .tool-label {
-            font-size: 0.75em; /* Smaller text for labels */
-            color: #555;
-            line-height: 1.2;
-             /* Prevent text wrapping */
-            white-space: normal;
-            display: block; /* Ensure it takes block space */
-             word-wrap: break-word; /* Allow breaking long words if necessary */
-             min-height: 2.4em; /* Reserve space for two lines */
-             display: flex;
-             align-items: center; /* Vertically center */
-             justify-content: center; /* Horizontally center */
+            font-size: 0.75em; color: #555; line-height: 1.2;
+            white-space: normal; display: block; word-wrap: break-word;
+            min-height: 2.4em; display: flex; align-items: center; justify-content: center; flex-grow: 1;
         }
 
-        /* File Transfer Screen Specific Styles */
-        .file-transfer-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff; /* White background */
-            z-index: 10; /* Make sure it's on top */
+        /* --- Individual Tool Screens --- */
+        .tool-screen {
             display: none; /* Hidden by default */
             flex-direction: column;
+            height: 100%; /* Take full height */
+            background-color: #fff; /* White background for tools */
+            position: absolute; /* Position over the grid */
+            top: 0; left: 0; width: 100%; z-index: 10;
+            overflow-y: auto; /* Allow scrolling within tool */
         }
 
-        .file-transfer-header {
+        .tool-header {
             display: flex;
             align-items: center;
             padding: 15px;
-            padding-top: 30px;
+            padding-top: 25px; /* Match app header spacing */
             border-bottom: 1px solid #eee;
+            background-color: #f8f9fa; /* Light header for tool screen */
+            position: sticky; top: 0; z-index: 11; /* Keep tool header visible */
         }
 
-        .back-button {
+        .tool-back-button {
             font-size: 1.5em;
             cursor: pointer;
             margin-right: 15px;
+            font-weight: bold;
         }
 
-        .file-transfer-title {
+        .tool-title {
             flex-grow: 1;
             text-align: center;
             font-size: 1.2em;
             font-weight: 600;
-        }
-
-        .history-icon {
-            font-size: 1.3em;
-            cursor: pointer;
-        }
-
-        .file-transfer-content {
-            padding: 30px 20px;
-            text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .progress-circle-container {
-             margin-bottom: 30px;
-             position: relative;
-             width: 150px;
-             height: 150px;
-             margin-left: auto;
-             margin-right: auto;
-        }
-
-        .progress-circle {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 10px solid #e6e6e6; /* Background track */
-            border-top-color: #2196F3; /* Progress color */
-            animation: spin 1s linear infinite; /* Simple spinning animation for demo */
-            position: relative;
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             flex-direction: column;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        /* Static representation - replace animation with border calculation for real progress */
-
-
-        .progress-percentage {
-            font-size: 1.8em;
-            font-weight: bold;
             color: #333;
-             position: absolute; /* Position inside circle */
-             top: 50%;
-             left: 50%;
-             transform: translate(-50%, -70%); /* Adjust vertical position */
-        }
-         .progress-fraction {
-             font-size: 0.9em;
-             color: #777;
-             position: absolute; /* Position inside circle */
-             top: 50%;
-             left: 50%;
-             transform: translate(-50%, 20%); /* Adjust vertical position */
         }
 
-
-        .file-list {
-            text-align: left;
-            margin-top: 20px;
-            flex-grow: 1; /* Take remaining space */
-             overflow-y: auto; /* Scroll if many files */
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .file-icon {
-            font-size: 1.8em;
-            margin-right: 15px;
-            color: #555;
-        }
-
-        .file-details {
+        .tool-content {
+            padding: 20px;
             flex-grow: 1;
         }
 
-        .file-name {
-            font-size: 0.9em;
-            color: #333;
-            margin-bottom: 5px;
-            word-break: break-all; /* Handle long names */
-        }
+        /* --- Styling for Specific Tools --- */
 
-        .file-progress-bar {
-            height: 6px;
-            background-color: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden; /* Clip the inner bar */
+        /* Calculator */
+        #calculatorScreen .calc-display {
+            background-color: #e9ecef; border-radius: 8px; padding: 15px;
+            text-align: right; font-size: 2em; margin-bottom: 20px;
+            min-height: 60px; word-wrap: break-word;
         }
+        #calculatorScreen .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        #calculatorScreen .calc-buttons button {
+            padding: 15px; font-size: 1.2em; border: none; border-radius: 8px;
+            background-color: #f1f3f5; cursor: pointer; transition: background-color 0.2s;
+        }
+        #calculatorScreen .calc-buttons button:hover { background-color: #dee2e6; }
+        #calculatorScreen .calc-buttons button.operator { background-color: #ffc107; color: white; }
+        #calculatorScreen .calc-buttons button.equals { background-color: #28a745; color: white; grid-column: span 2; }
+        #calculatorScreen .calc-buttons button.clear { background-color: #dc3545; color: white; }
 
-        .file-progress {
-            height: 100%;
-            background-color: #4CAF50; /* Green progress */
-            width: 100%; /* Show 100% for demo */
-            border-radius: 3px;
+        /* Unit Converter */
+        #unitConverterScreen .converter-group { margin-bottom: 15px; }
+        #unitConverterScreen label { display: block; margin-bottom: 5px; font-weight: 500; }
+        #unitConverterScreen select, #unitConverterScreen input {
+            width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; font-size: 1em;
         }
+        #unitConverterScreen .result { margin-top: 15px; font-weight: bold; }
+
+        /* Timer & Stopwatch */
+        #timerScreen .time-display, #stopwatchScreen .time-display {
+            font-size: 3em; text-align: center; margin-bottom: 20px; font-family: 'Courier New', Courier, monospace;
+        }
+        #timerScreen input[type=number] { width: 60px; padding: 5px; margin: 0 5px; text-align: center; }
+        #timerScreen .timer-controls, #stopwatchScreen .stopwatch-controls { text-align: center; margin-top: 15px; }
+        #timerScreen button, #stopwatchScreen button { padding: 10px 20px; font-size: 1em; margin: 0 5px; cursor: pointer; border-radius: 5px; border: none; }
+        #stopwatchScreen #laps { margin-top: 20px; max-height: 150px; overflow-y: auto; border: 1px solid #eee; padding: 5px; list-style-position: inside; }
+
+         /* Notes */
+        #notesScreen textarea { width: 100%; height: 200px; border: 1px solid #ccc; border-radius: 5px; padding: 10px; font-size: 1em; margin-bottom: 10px;}
+        #notesScreen button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 5px; margin-right: 10px;}
+        #notesScreen .save-btn { background-color: #28a745; color: white; }
+        #notesScreen .clear-btn { background-color: #ffc107; }
+
+         /* QR Generator */
+        #qrGeneratorScreen input[type=text] { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;}
+        #qrGeneratorScreen button { padding: 10px 15px; cursor: pointer; border: none; border-radius: 5px; }
+        #qrGeneratorScreen #qrCodeOutput { margin-top: 20px; text-align: center; font-style: italic; color: #555; }
+
+        /* Basic Utility Screens (Example: Calculator, add others similarly) */
+        .tool-content input, .tool-content select, .tool-content textarea, .tool-content button {
+            font-size: 1em; margin-bottom: 10px;
+        }
+        .tool-content button { padding: 10px 15px; cursor: pointer; border-radius: 5px; border: none; background-color: #007bff; color: white; margin-right: 5px;}
+        .tool-content button:hover { background-color: #0056b3; }
+         .tool-content button.secondary { background-color: #6c757d; }
+         .tool-content button.secondary:hover { background-color: #5a6268; }
+
+
+        /* File Transfer Screen (Placeholder, kept from previous) */
+         .file-transfer-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff; z-index: 10; display: none; flex-direction: column;
+        }
+         /* Styles for file transfer elements (progress circle, list) - Copied from previous */
+         .file-transfer-header { display: flex; align-items: center; padding: 15px; padding-top: 30px; border-bottom: 1px solid #eee; }
+         .back-button { font-size: 1.5em; cursor: pointer; margin-right: 15px; }
+         .file-transfer-title { flex-grow: 1; text-align: center; font-size: 1.2em; font-weight: 600; }
+         .history-icon { font-size: 1.3em; cursor: pointer; }
+         .file-transfer-content { padding: 30px 20px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; }
+         .progress-circle-container { margin-bottom: 30px; position: relative; width: 150px; height: 150px; margin-left: auto; margin-right: auto; }
+         .progress-circle { width: 150px; height: 150px; border-radius: 50%; border: 10px solid #e6e6e6; border-top-color: #2196F3; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+         .progress-percentage { font-size: 1.8em; font-weight: bold; color: #333; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -70%); }
+         .progress-fraction { font-size: 0.9em; color: #777; position: absolute; top: 50%; left: 50%; transform: translate(-50%, 20%); }
+         .file-list { text-align: left; margin-top: 20px; flex-grow: 1; overflow-y: auto; }
+         .file-item { display: flex; align-items: center; margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; }
+         .file-icon { font-size: 1.8em; margin-right: 15px; color: #555; }
+         .file-details { flex-grow: 1; }
+         .file-name { font-size: 0.9em; color: #333; margin-bottom: 5px; word-break: break-all; }
+         .file-progress-bar { height: 6px; background-color: #e0e0e0; border-radius: 3px; overflow: hidden; }
+         .file-progress { height: 100%; background-color: #4CAF50; width: 100%; border-radius: 3px; }
 
 
     </style>
@@ -347,13 +217,13 @@
 <body>
 
     <div class="phone-container">
-        <!-- Main App Screen -->
-        <div class="app-screen" id="mainScreen">
+        <!-- App Screen Container -->
+        <div class="app-screen">
+
+            <!-- Sticky Header -->
             <div class="app-header">
                 <div class="header-top">
-                    <div class="header-logo">
-                        <span class="logo-a">A</span> All tools
-                    </div>
+                    <div class="header-logo"><span class="logo-a">A</span> All tools</div>
                     <div class="header-menu-icon">⋮</div>
                 </div>
                 <div class="header-welcome">Welcome to all tools,</div>
@@ -363,409 +233,1097 @@
                 </div>
             </div>
 
-            <!-- Instant Tools Section -->
-            <div class="tool-section">
-                 <div class="section-header">
-                    <div class="section-title">Instant tools</div>
-                    <div class="section-edit-icon">✎</div>
-                </div>
-                <div class="tool-grid">
-                    <div class="tool-item" data-tool-name="Cam Scanner">
-                        <div class="tool-icon">📷</div>
-                        <span class="tool-label">Cam Scanner</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Stop motion animation">
-                        <div class="tool-icon">🎬</div>
-                        <span class="tool-label">Stop motion animation</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Steps">
-                        <div class="tool-icon">🚶</div>
-                        <span class="tool-label">Steps</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Add Tool">
-                        <div class="tool-icon add">+</div>
-                        <span class="tool-label">Add</span>
+            <!-- Main Tool Grid (Scrollable Area) -->
+            <div id="mainToolGridContainer">
+                <!-- Instant Tools -->
+                <div class="tool-section">
+                    <div class="section-header"><div class="section-title">Instant tools</div><div class="section-edit-icon">✎</div></div>
+                    <div class="tool-grid">
+                        <div class="tool-item" data-tool-id="camScannerTool"> <div class="tool-icon">📷</div> <span class="tool-label">Cam Scanner</span> </div>
+                        <div class="tool-item" data-tool-id="stopMotionTool"> <div class="tool-icon">🎬</div> <span class="tool-label">Stop motion animation</span> </div>
+                        <div class="tool-item" data-tool-id="stepsTool"> <div class="tool-icon">🚶</div> <span class="tool-label">Steps</span> </div>
+                        <div class="tool-item" data-tool-id="addTool"> <div class="tool-icon add">+</div> <span class="tool-label">Add</span> </div>
                     </div>
                 </div>
-            </div>
+                <!-- WiFi Utility -->
+                <div class="tool-section">
+                    <div class="section-header"><div class="section-title">WiFi Utility</div></div>
+                    <div class="tool-grid">
+                        <div class="tool-item" data-tool-id="fileTransferTool"> <div class="tool-icon">↔️</div> <span class="tool-label">File Transfer</span> </div>
+                        <div class="tool-item" data-tool-id="musicGroupTool"> <div class="tool-icon">🎵</div> <span class="tool-label">Music Group</span> </div>
+                        <div class="tool-item" data-tool-id="cctvTool"> <div class="tool-icon">👁️</div> <span class="tool-label">Cctv</span> </div>
+                        <div class="tool-item" data-tool-id="controlDeviceTool"> <div class="tool-icon">💡</div> <span class="tool-label">Control Device</span> </div>
+                        <div class="tool-item" data-tool-id="walkieTalkieTool"> <div class="tool-icon">📻</div> <span class="tool-label">Walkie Talkie</span> </div>
+                        <div class="tool-item" data-tool-id="wifiCallsTool"> <div class="tool-icon">📞</div> <span class="tool-label">Wifi Calls</span> </div>
+                        <div class="tool-item" data-tool-id="wifiAnalyzerTool"> <div class="tool-icon">📶</div> <span class="tool-label">WiFi Analyzer</span> </div>
+                        <div class="tool-item" data-tool-id="hotspotTool"> <div class="tool-icon">🔥</div> <span class="tool-label">Hotspot</span> </div>
+                    </div>
+                </div>
+                 <!-- Basic Utility -->
+                 <div class="tool-section">
+                     <div class="section-header"><div class="section-title">Basic Utility</div></div>
+                    <div class="tool-grid">
+                        <div class="tool-item" data-tool-id="compassTool"> <div class="tool-icon">🧭</div> <span class="tool-label">Compass</span> </div>
+                        <div class="tool-item" data-tool-id="levelTool"> <div class="tool-icon">📐</div> <span class="tool-label">Level</span> </div>
+                        <div class="tool-item" data-tool-id="protractorTool"> <div class="tool-icon">⌔</div> <span class="tool-label">Protractor</span> </div>
+                        <div class="tool-item" data-tool-id="rulerTool"> <div class="tool-icon">📏</div> <span class="tool-label">Ruler</span> </div>
+                        <div class="tool-item" data-tool-id="flashlightTool"> <div class="tool-icon">🔦</div> <span class="tool-label">Flashlight</span> </div>
+                        <div class="tool-item" data-tool-id="mirrorTool"> <div class="tool-icon">🪞</div> <span class="tool-label">Mirror</span> </div>
+                        <div class="tool-item" data-tool-id="magnifierTool"> <div class="tool-icon">🔍</div> <span class="tool-label">Magnifier</span> </div>
+                        <div class="tool-item" data-tool-id="soundMeterTool"> <div class="tool-icon">🔊</div> <span class="tool-label">Sound Meter</span> </div>
+                    </div>
+                </div>
+                <!-- Extra Tools -->
+                <div class="tool-section">
+                    <div class="section-header"><div class="section-title">Extra Tools</div></div>
+                    <div class="tool-grid">
+                        <div class="tool-item" data-tool-id="emiCalculatorTool"> <div class="tool-icon">🏦</div> <span class="tool-label">EMI</span> </div>
+                        <div class="tool-item" data-tool-id="billingSystemTool"> <div class="tool-icon">🧾</div> <span class="tool-label">Billing System</span> </div>
+                        <div class="tool-item" data-tool-id="daysCounterTool"> <div class="tool-icon">🎂</div> <span class="tool-label">Days Counter</span> </div> <!-- Add Func -->
+                        <div class="tool-item" data-tool-id="unitConverterTool"> <div class="tool-icon">🔄</div> <span class="tool-label">Unit Converter</span> </div> <!-- Add Func -->
+                        <div class="tool-item" data-tool-id="stopwatchTool"> <div class="tool-icon">⏱️</div> <span class="tool-label">Stopwatch</span> </div> <!-- Add Func -->
+                        <div class="tool-item" data-tool-id="timerTool"> <div class="tool-icon">⏳</div> <span class="tool-label">Timer</span> </div> <!-- Add Func -->
+                        <div class="tool-item" data-tool-id="numberCounterTool"> <div class="tool-icon">🔢</div> <span class="tool-label">Number Counter</span> </div>
+                        <div class="tool-item" data-tool-id="randomTool"> <div class="tool-icon">🎲</div> <span class="tool-label">Random</span> </div> <!-- Add Func -->
+                        <div class="tool-item" data-tool-id="qrBarcodeTool"> <div class="tool-icon">█║▌║</div> <span class="tool-label">Generate QR</span> </div> <!-- Add Func -->
+                        <div class="tool-item" data-tool-id="morseCodeTool"> <div class="tool-icon">···−−−···</div> <span class="tool-label">Morse code</span> </div>
+                        <div class="tool-item" data-tool-id="bluetoothControllerTool"> <div class="tool-icon">🎮</div> <span class="tool-label">Bluetooth Controller</span> </div>
+                        <div class="tool-item" data-tool-id="fileLockerTool"> <div class="tool-icon">🔒</div> <span class="tool-label">File locker</span> </div>
+                        <div class="tool-item" data-tool-id="calculatorTool"> <div class="tool-icon">➕</div> <span class="tool-label">Calculator</span> </div> <!-- Add Func -->
+                        <div class="tool-item" data-tool-id="deviceInfoTool"> <div class="tool-icon">ℹ️</div> <span class="tool-label">Device info</span> </div>
+                        <div class="tool-item" data-tool-id="screenRecorderTool"> <div class="tool-icon">🔴</div> <span class="tool-label">Screen Recorder</span> </div>
+                        <div class="tool-item" data-tool-id="notesTool"> <div class="tool-icon">📝</div> <span class="tool-label">Notes</span> </div> <!-- Add Func -->
+                        <!-- Add more placeholders -->
+                         <div class="tool-item" data-tool-id="bmiCalculatorTool"> <div class="tool-icon">💪</div> <span class="tool-label">BMI Calc</span> </div> <!-- Add Func -->
+                         <div class="tool-item" data-tool-id="passwordGenTool"> <div class="tool-icon">🔑</div> <span class="tool-label">Pass Gen</span> </div> <!-- Add Func -->
+                         <div class="tool-item" data-tool-id="colorPickerTool"> <div class="tool-icon">🎨</div> <span class="tool-label">Color Picker</span> </div> <!-- Add Func -->
+                         <div class="tool-item" data-tool-id="textEditorTool"> <div class="tool-icon">📄</div> <span class="tool-label">Text Editor</span> </div> <!-- Add Func -->
+                         <div class="tool-item" data-tool-id="drawingPadTool"> <div class="tool-icon">🖌️</div> <span class="tool-label">Drawing Pad</span> </div> <!-- Add Func -->
+                         <div class="tool-item" data-tool-id="worldClockTool"> <div class="tool-icon">🌍</div> <span class="tool-label">World Clock</span> </div> <!-- Add Func -->
 
-            <!-- WiFi Utility Section -->
-            <div class="tool-section">
-                <div class="section-header">
-                    <div class="section-title">WiFi Utility</div>
-                 </div>
-                <div class="tool-grid">
-                    <div class="tool-item" id="fileTransferTool" data-tool-name="File Transfer">
-                        <div class="tool-icon">↔️</div>
-                        <span class="tool-label">File Transfer</span>
+                         <!-- Add 40+ more placeholder tools -->
+                         <div class="tool-item" data-tool-id="placeholder27"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 27</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder28"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 28</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder29"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 29</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder30"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 30</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder31"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 31</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder32"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 32</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder33"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 33</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder34"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 34</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder35"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 35</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder36"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 36</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder37"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 37</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder38"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 38</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder39"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 39</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder40"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 40</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder41"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 41</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder42"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 42</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder43"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 43</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder44"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 44</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder45"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 45</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder46"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 46</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder47"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 47</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder48"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 48</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder49"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 49</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder50"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 50</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder51"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 51</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder52"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 52</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder53"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 53</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder54"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 54</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder55"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 55</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder56"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 56</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder57"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 57</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder58"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 58</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder59"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 59</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder60"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 60</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder61"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 61</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder62"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 62</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder63"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 63</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder64"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 64</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder65"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 65</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder66"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 66</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder67"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 67</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder68"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 68</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder69"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 69</span> </div>
+                         <div class="tool-item" data-tool-id="placeholder70"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 70</span> </div>
                     </div>
-                    <div class="tool-item" data-tool-name="Music Group">
-                        <div class="tool-icon">🎵</div>
-                        <span class="tool-label">Music Group</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Cctv">
-                        <div class="tool-icon">👁️</div>
-                        <span class="tool-label">Cctv</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Control Device">
-                        <div class="tool-icon">💡</div>
-                        <span class="tool-label">Control Device</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Walkie Talkie">
-                        <div class="tool-icon">📻</div>
-                        <span class="tool-label">Walkie Talkie</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Wifi Calls">
-                        <div class="tool-icon">📞</div>
-                        <span class="tool-label">Wifi Calls</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="WiFi Analyzer">
-                        <div class="tool-icon">📶</div>
-                        <span class="tool-label">WiFi Analyzer</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Hotspot">
-                        <div class="tool-icon">🔥</div>
-                        <span class="tool-label">Hotspot</span>
+                </div>
+            </div> <!-- End Main Tool Grid Container -->
+
+
+            <!-- ================================== -->
+            <!-- == INDIVIDUAL TOOL SCREENS BELOW == -->
+            <!-- ================================== -->
+
+             <!-- --- Calculator Screen --- -->
+            <div class="tool-screen" id="calculatorScreen">
+                <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">Calculator</span>
+                </div>
+                <div class="tool-content">
+                    <div id="calcDisplay" class="calc-display">0</div>
+                    <div class="calc-buttons">
+                        <button onclick="calcClear()" class="clear">C</button>
+                        <button onclick="calcAppend('/')" class="operator">/</button>
+                        <button onclick="calcAppend('*')" class="operator">*</button>
+                        <button onclick="calcBackspace()">⌫</button>
+
+                        <button onclick="calcAppend('7')">7</button>
+                        <button onclick="calcAppend('8')">8</button>
+                        <button onclick="calcAppend('9')">9</button>
+                        <button onclick="calcAppend('-')" class="operator">-</button>
+
+                        <button onclick="calcAppend('4')">4</button>
+                        <button onclick="calcAppend('5')">5</button>
+                        <button onclick="calcAppend('6')">6</button>
+                        <button onclick="calcAppend('+')" class="operator">+</button>
+
+                        <button onclick="calcAppend('1')">1</button>
+                        <button onclick="calcAppend('2')">2</button>
+                        <button onclick="calcAppend('3')">3</button>
+                        <button onclick="calcEquals()" class="equals">=</button>
+
+                        <button onclick="calcAppend('0')" style="grid-column: span 2;">0</button>
+                        <button onclick="calcAppend('.')">.</button>
                     </div>
                 </div>
             </div>
 
-             <!-- Basic Utility Section -->
-            <div class="tool-section">
-                 <div class="section-header">
-                    <div class="section-title">Basic Utility</div>
-                 </div>
-                <div class="tool-grid">
-                    <div class="tool-item" data-tool-name="Compass">
-                        <div class="tool-icon">🧭</div>
-                        <span class="tool-label">Compass</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Level">
-                        <div class="tool-icon">📐</div>
-                        <span class="tool-label">Level</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Protractor">
-                        <div class="tool-icon">⌔</div>
-                        <span class="tool-label">Protractor</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Ruler">
-                        <div class="tool-icon">📏</div>
-                        <span class="tool-label">Ruler</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Flashlight">
-                        <div class="tool-icon">🔦</div>
-                        <span class="tool-label">Flashlight</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Mirror">
-                        <div class="tool-icon">🪞</div>
-                        <span class="tool-label">Mirror</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Magnifier">
-                        <div class="tool-icon">🔍</div>
-                        <span class="tool-label">Magnifier</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Sound Meter">
-                        <div class="tool-icon">🔊</div>
-                        <span class="tool-label">Sound Meter</span>
-                    </div>
+            <!-- --- Unit Converter Screen --- -->
+            <div class="tool-screen" id="unitConverterScreen">
+                 <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">Unit Converter</span>
                 </div>
-            </div>
-
-
-            <!-- Extra Tools Section -->
-            <div class="tool-section">
-                <div class="section-header">
-                    <div class="section-title">Extra Tools</div>
-                 </div>
-                <div class="tool-grid">
-                    <div class="tool-item" data-tool-name="EMI Calculator">
-                        <div class="tool-icon">🏦</div>
-                        <span class="tool-label">EMI</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Billing System">
-                        <div class="tool-icon">🧾</div>
-                        <span class="tool-label">Billing System</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Days Counter">
-                        <div class="tool-icon">🎂</div>
-                        <span class="tool-label">Days Counter</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Unit Converter">
-                        <div class="tool-icon">🔄</div>
-                        <span class="tool-label">Unit Converter</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Stopwatch">
-                        <div class="tool-icon">⏱️</div>
-                        <span class="tool-label">Stopwatch</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Timer">
-                        <div class="tool-icon">⏳</div>
-                        <span class="tool-label">Timer</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Number Counter">
-                        <div class="tool-icon">🔢</div>
-                        <span class="tool-label">Number Counter</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Random Generator">
-                        <div class="tool-icon">🎲</div>
-                        <span class="tool-label">Random</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Generate Qr/Barcode">
-                        <div class="tool-icon">█║▌║</div> <!-- Simple barcode look -->
-                        <span class="tool-label">Generate Qr/Barcode</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Morse code">
-                        <div class="tool-icon">···−−−···</div> <!-- Morse representation -->
-                        <span class="tool-label">Morse code</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Bluetooth Controller">
-                        <div class="tool-icon">🎮</div>
-                        <span class="tool-label">Bluetooth Controller</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="File locker">
-                        <div class="tool-icon">🔒</div>
-                        <span class="tool-label">File locker</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Calculator">
-                        <div class="tool-icon">➕</div>
-                        <span class="tool-label">Calculator</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Device info">
-                        <div class="tool-icon">ℹ️</div>
-                        <span class="tool-label">Device info</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Screen Recorder">
-                        <div class="tool-icon">🔴</div>
-                        <span class="tool-label">Screen Recorder</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Notes">
-                        <div class="tool-icon">📝</div>
-                        <span class="tool-label">Notes</span>
-                    </div>
-                     <!-- Add more placeholder tools to reach 70+ -->
-                    <div class="tool-item" data-tool-name="Tool 17">
-                        <div class="tool-icon">⚙️</div>
-                        <span class="tool-label">Tool 17</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Tool 18">
-                        <div class="tool-icon">🔧</div>
-                        <span class="tool-label">Tool 18</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Tool 19">
-                        <div class="tool-icon">💡</div>
-                        <span class="tool-label">Tool 19</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Tool 20">
-                        <div class="tool-icon">✨</div>
-                        <span class="tool-label">Tool 20</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Currency Converter">
-                        <div class="tool-icon">💲</div>
-                        <span class="tool-label">Currency</span>
-                    </div>
-                    <div class="tool-item" data-tool-name="Age Calculator">
-                        <div class="tool-icon">👶</div>
-                        <span class="tool-label">Age Calc</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="BMI Calculator">
-                        <div class="tool-icon">💪</div>
-                        <span class="tool-label">BMI Calc</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="World Clock">
-                        <div class="tool-icon">🌍</div>
-                        <span class="tool-label">World Clock</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Color Picker">
-                        <div class="tool-icon">🎨</div>
-                        <span class="tool-label">Color Picker</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Text Editor">
-                        <div class="tool-icon">📄</div>
-                        <span class="tool-label">Text Editor</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Drawing Pad">
-                        <div class="tool-icon">🖌️</div>
-                        <span class="tool-label">Drawing Pad</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Password Gen">
-                        <div class="tool-icon">🔑</div>
-                        <span class="tool-label">Pass Gen</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="System Cleaner">
-                        <div class="tool-icon">🧹</div>
-                        <span class="tool-label">Cleaner</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Battery Info">
-                        <div class="tool-icon">🔋</div>
-                        <span class="tool-label">Battery Info</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Network Speed">
-                        <div class="tool-icon">🌐</div>
-                        <span class="tool-label">Net Speed</span>
-                    </div>
-                     <div class="tool-item" data-tool-name="Sensor Test">
-                        <div class="tool-icon">🌡️</div>
-                        <span class="tool-label">Sensor Test</span>
-                    </div>
-                     <!-- Add more items similarly until you have 70+ -->
-                     <div class="tool-item" data-tool-name="Tool 33"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 33</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 34"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 34</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 35"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 35</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 36"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 36</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 37"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 37</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 38"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 38</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 39"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 39</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 40"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 40</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 41"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 41</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 42"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 42</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 43"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 43</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 44"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 44</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 45"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 45</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 46"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 46</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 47"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 47</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 48"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 48</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 49"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 49</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 50"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 50</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 51"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 51</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 52"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 52</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 53"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 53</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 54"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 54</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 55"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 55</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 56"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 56</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 57"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 57</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 58"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 58</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 59"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 59</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 60"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 60</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 61"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 61</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 62"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 62</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 63"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 63</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 64"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 64</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 65"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 65</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 66"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 66</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 67"> <div class="tool-icon">💡</div> <span class="tool-label">Tool 67</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 68"> <div class="tool-icon">✨</div> <span class="tool-label">Tool 68</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 69"> <div class="tool-icon">⚙️</div> <span class="tool-label">Tool 69</span> </div>
-                     <div class="tool-item" data-tool-name="Tool 70"> <div class="tool-icon">🔧</div> <span class="tool-label">Tool 70+</span> </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- File Transfer Screen (Initially Hidden) -->
-        <div class="app-screen file-transfer-screen" id="fileTransferScreen">
-            <div class="file-transfer-header">
-                <span class="back-button" id="backButton">←</span>
-                <span class="file-transfer-title">File Transfer</span>
-                <span class="history-icon">🕘</span>
-            </div>
-            <div class="file-transfer-content">
-                <div class="progress-circle-container">
-                     <div class="progress-circle" style="border-top-color: #2196F3; border-right-color: #2196F3; border-bottom-color: #e6e6e6; border-left-color: #e6e6e6; animation: none; transform: rotate(-45deg);">
-                        <!-- Static representation of 54% -->
-                        <!-- Border is used here just for visual structure -->
+                <div class="tool-content">
+                     <div class="converter-group">
+                         <label for="ucCategory">Category:</label>
+                         <select id="ucCategory" onchange="updateUnitOptions()">
+                             <option value="length">Length</option>
+                             <option value="weight">Weight</option>
+                             <option value="temperature">Temperature</option>
+                         </select>
                      </div>
-                     <div class="progress-percentage">54%</div>
-                     <div class="progress-fraction">0.3/0.6 MB</div>
-                 </div>
-
-                <div class="file-list">
-                    <div class="file-item">
-                        <div class="file-icon">🖼️</div>
-                        <div class="file-details">
-                            <div class="file-name">1737182013827.jpeg</div>
-                            <div class="file-progress-bar">
-                                <div class="file-progress" style="width: 100%;"></div>
-                            </div>
-                        </div>
+                    <div class="converter-group">
+                        <label for="ucFromUnit">From:</label>
+                        <select id="ucFromUnit"></select>
+                         <input type="number" id="ucInputValue" placeholder="Enter value" oninput="convertUnits()">
                     </div>
-                     <div class="file-item">
-                        <div class="file-icon">🖼️</div>
-                        <div class="file-details">
-                            <div class="file-name">Screenshot_20250116-143938.png</div>
-                            <div class="file-progress-bar">
-                                <div class="file-progress" style="width: 100%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                     <div class="file-item">
-                        <div class="file-icon">📄</div>
-                        <div class="file-details">
-                            <div class="file-name">document_backup.zip</div>
-                            <div class="file-progress-bar">
-                                <div class="file-progress" style="width: 20%; background-color: #2196F3;"></div> <!-- Example in progress -->
-                            </div>
-                        </div>
+                     <div class="converter-group">
+                         <label for="ucToUnit">To:</label>
+                        <select id="ucToUnit"></select>
+                        <div id="ucResult" class="result">Result: -</div>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div><!-- End Phone Container -->
+             <!-- --- Timer Screen --- -->
+            <div class="tool-screen" id="timerScreen">
+                <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">Timer</span>
+                </div>
+                 <div class="tool-content">
+                    <div class="time-input" style="text-align: center; margin-bottom: 20px;">
+                        <input type="number" id="timerHours" min="0" max="99" value="0"> H :
+                        <input type="number" id="timerMinutes" min="0" max="59" value="5"> M :
+                        <input type="number" id="timerSeconds" min="0" max="59" value="0"> S
+                    </div>
+                    <div id="timerDisplay" class="time-display">05:00</div>
+                    <div class="timer-controls">
+                        <button id="timerStartBtn" onclick="startTimer()">Start</button>
+                        <button id="timerStopBtn" onclick="stopTimer()" style="display: none;">Stop</button>
+                        <button id="timerResetBtn" onclick="resetTimer()">Reset</button>
+                    </div>
+                 </div>
+            </div>
+
+             <!-- --- Stopwatch Screen --- -->
+            <div class="tool-screen" id="stopwatchScreen">
+                <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">Stopwatch</span>
+                </div>
+                <div class="tool-content">
+                    <div id="stopwatchDisplay" class="time-display">00:00:00.0</div>
+                    <div class="stopwatch-controls">
+                        <button id="swStartBtn" onclick="startStopwatch()">Start</button>
+                        <button id="swStopBtn" onclick="stopStopwatch()" style="display: none;">Stop</button>
+                        <button id="swResetBtn" onclick="resetStopwatch()">Reset</button>
+                        <button id="swLapBtn" onclick="lapStopwatch()" disabled>Lap</button>
+                    </div>
+                    <ul id="laps"></ul>
+                 </div>
+            </div>
+
+            <!-- --- Notes Screen --- -->
+            <div class="tool-screen" id="notesScreen">
+                 <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">Notes</span>
+                </div>
+                <div class="tool-content">
+                    <textarea id="noteArea" placeholder="Start typing your note here..."></textarea>
+                    <button onclick="saveNote()" class="save-btn">Save Note</button>
+                     <button onclick="clearNote()" class="clear-btn">Clear Note</button>
+                     <p id="noteStatus" style="margin-top: 10px; font-size: 0.9em; color: green;"></p>
+                </div>
+            </div>
+
+            <!-- --- QR Generator Screen --- -->
+            <div class="tool-screen" id="qrGeneratorScreen">
+                <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">QR Code Generator</span>
+                </div>
+                <div class="tool-content">
+                    <label for="qrInputText">Text/URL to encode:</label>
+                    <input type="text" id="qrInputText" placeholder="Enter text or URL">
+                    <button onclick="generateQRCode()">Generate</button>
+                    <div id="qrCodeOutput">
+                        <!-- QR Code will be displayed here (as text for now) -->
+                        QR Code generation requires a library. This is a placeholder.
+                    </div>
+                </div>
+            </div>
+
+             <!-- --- Days Counter Screen --- -->
+            <div class="tool-screen" id="daysCounterScreen">
+                 <div class="tool-header">
+                     <span class="tool-back-button">←</span>
+                     <span class="tool-title">Days Counter</span>
+                 </div>
+                 <div class="tool-content">
+                     <label for="dcStartDate">Start Date:</label>
+                     <input type="date" id="dcStartDate">
+                     <label for="dcEndDate">End Date:</label>
+                     <input type="date" id="dcEndDate">
+                     <button onclick="calculateDays()">Calculate Difference</button>
+                     <div id="dcResult" style="margin-top: 15px; font-weight: bold;">Result: -</div>
+                 </div>
+            </div>
+
+             <!-- --- Random Number Screen --- -->
+            <div class="tool-screen" id="randomScreen">
+                <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">Random Number Generator</span>
+                </div>
+                <div class="tool-content">
+                     <label for="randMin">Min:</label>
+                     <input type="number" id="randMin" value="1">
+                     <label for="randMax">Max:</label>
+                     <input type="number" id="randMax" value="100">
+                     <button onclick="generateRandom()">Generate</button>
+                     <div id="randResult" style="margin-top: 15px; font-size: 1.5em; font-weight: bold; text-align: center;">-</div>
+                </div>
+            </div>
+
+            <!-- --- BMI Calculator Screen --- -->
+            <div class="tool-screen" id="bmiCalculatorScreen">
+                <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">BMI Calculator</span>
+                </div>
+                <div class="tool-content">
+                    <div>
+                        <label for="bmiHeight">Height (cm):</label>
+                        <input type="number" id="bmiHeight" placeholder="e.g., 175">
+                    </div>
+                    <div>
+                        <label for="bmiWeight">Weight (kg):</label>
+                        <input type="number" id="bmiWeight" placeholder="e.g., 70">
+                    </div>
+                    <button onclick="calculateBMI()">Calculate BMI</button>
+                    <div id="bmiResult" style="margin-top: 15px; font-weight: bold;">Result: -</div>
+                </div>
+            </div>
+
+             <!-- --- Password Generator Screen --- -->
+            <div class="tool-screen" id="passwordGenScreen">
+                <div class="tool-header">
+                     <span class="tool-back-button">←</span>
+                     <span class="tool-title">Password Generator</span>
+                </div>
+                <div class="tool-content">
+                     <div>
+                         <label for="passLength">Length:</label>
+                         <input type="number" id="passLength" value="12" min="4" max="64">
+                     </div>
+                     <div>
+                         <input type="checkbox" id="passUpper" checked> <label for="passUpper">Uppercase (A-Z)</label>
+                     </div>
+                      <div>
+                         <input type="checkbox" id="passLower" checked> <label for="passLower">Lowercase (a-z)</label>
+                     </div>
+                      <div>
+                         <input type="checkbox" id="passNumbers" checked> <label for="passNumbers">Numbers (0-9)</label>
+                     </div>
+                     <div>
+                         <input type="checkbox" id="passSymbols"> <label for="passSymbols">Symbols (!@#$%^&*)</label>
+                     </div>
+                     <button onclick="generatePassword()">Generate Password</button>
+                     <input type="text" id="passOutput" readonly placeholder="Generated password..." style="margin-top: 15px; background: #eee;">
+                     <button onclick="copyPassword()" class="secondary">Copy</button>
+                 </div>
+            </div>
+
+             <!-- --- Color Picker Screen --- -->
+             <div class="tool-screen" id="colorPickerScreen">
+                <div class="tool-header">
+                     <span class="tool-back-button">←</span>
+                     <span class="tool-title">Color Picker</span>
+                </div>
+                 <div class="tool-content" style="text-align: center;">
+                     <label for="colorPickerInput">Choose a color:</label>
+                     <input type="color" id="colorPickerInput" value="#004d40" style="width: 80%; height: 100px; margin-top: 10px;">
+                     <div id="colorValueDisplay" style="margin-top: 20px; font-size: 1.2em; font-weight: bold;">#004d40</div>
+                 </div>
+            </div>
+
+            <!-- --- Text Editor Screen --- -->
+            <div class="tool-screen" id="textEditorScreen">
+                <div class="tool-header">
+                    <span class="tool-back-button">←</span>
+                    <span class="tool-title">Simple Text Editor</span>
+                </div>
+                <div class="tool-content">
+                    <textarea id="textEditorArea" placeholder="Start typing..." style="width: 100%; height: 300px; border: 1px solid #ccc; padding: 10px;"></textarea>
+                     <button onclick="saveText()" class="save-btn">Save</button>
+                     <button onclick="loadText()" >Load</button>
+                     <button onclick="clearText()" class="clear-btn">Clear</button>
+                     <p id="textEditorStatus" style="margin-top: 10px; font-size: 0.9em; color: green;"></p>
+                </div>
+            </div>
+
+             <!-- --- Drawing Pad Screen --- -->
+            <div class="tool-screen" id="drawingPadScreen">
+                <div class="tool-header">
+                     <span class="tool-back-button">←</span>
+                     <span class="tool-title">Basic Drawing Pad</span>
+                </div>
+                 <div class="tool-content">
+                     <canvas id="drawingCanvas" width="300" height="300" style="border: 1px solid black; cursor: crosshair; display: block; margin: 0 auto;"></canvas>
+                     <div style="text-align: center; margin-top: 10px;">
+                         <button onclick="clearCanvas()">Clear Canvas</button>
+                     </div>
+                 </div>
+            </div>
+
+             <!-- --- World Clock Screen --- -->
+             <div class="tool-screen" id="worldClockScreen">
+                <div class="tool-header">
+                     <span class="tool-back-button">←</span>
+                     <span class="tool-title">World Clock</span>
+                </div>
+                 <div class="tool-content">
+                     <div id="clockDisplayLondon" style="margin-bottom: 15px;">London: Loading...</div>
+                     <div id="clockDisplayNewYork" style="margin-bottom: 15px;">New York: Loading...</div>
+                     <div id="clockDisplayTokyo" style="margin-bottom: 15px;">Tokyo: Loading...</div>
+                     <div id="clockDisplaySydney" style="margin-bottom: 15px;">Sydney: Loading...</div>
+                 </div>
+            </div>
+
+
+             <!-- --- File Transfer Screen (Placeholder) --- -->
+            <div class="app-screen file-transfer-screen" id="fileTransferScreen">
+                 <div class="file-transfer-header">
+                    <span class="back-button tool-back-button">←</span> <!-- Use common class -->
+                    <span class="file-transfer-title">File Transfer</span>
+                    <span class="history-icon">🕘</span>
+                </div>
+                 <div class="file-transfer-content">
+                    <!-- Content from previous example -->
+                     <div class="progress-circle-container">
+                         <div class="progress-circle" style="border-top-color: #2196F3; border-right-color: #2196F3; border-bottom-color: #e6e6e6; border-left-color: #e6e6e6; animation: none; transform: rotate(-45deg);"></div>
+                         <div class="progress-percentage">54%</div>
+                         <div class="progress-fraction">0.3/0.6 MB</div>
+                     </div>
+                     <div class="file-list">
+                         <div class="file-item"> <div class="file-icon">🖼️</div> <div class="file-details"> <div class="file-name">1737182013827.jpeg</div> <div class="file-progress-bar"><div class="file-progress" style="width: 100%;"></div></div> </div> </div>
+                         <div class="file-item"> <div class="file-icon">🖼️</div> <div class="file-details"> <div class="file-name">Screenshot_20250116-143938.png</div> <div class="file-progress-bar"><div class="file-progress" style="width: 100%;"></div></div> </div> </div>
+                         <div class="file-item"> <div class="file-icon">📄</div> <div class="file-details"> <div class="file-name">document_backup.zip</div> <div class="file-progress-bar"><div class="file-progress" style="width: 20%; background-color: #2196F3;"></div></div> </div> </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End App Screen -->
+    </div> <!-- End Phone Container -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mainScreen = document.getElementById('mainScreen');
-            const fileTransferScreen = document.getElementById('fileTransferScreen');
-            const fileTransferTool = document.getElementById('fileTransferTool');
-            const backButton = document.getElementById('backButton');
+        // --- Global Variables & DOM References ---
+        const mainGridContainer = document.getElementById('mainToolGridContainer');
+        const toolScreens = document.querySelectorAll('.tool-screen');
+        const backButtons = document.querySelectorAll('.tool-back-button');
+        const toolItems = document.querySelectorAll('.tool-item');
+        let currentToolScreen = null; // Track the currently visible tool screen
 
-            // --- Navigation ---
-            if (fileTransferTool) {
-                fileTransferTool.addEventListener('click', () => {
-                    mainScreen.style.display = 'none';
-                    fileTransferScreen.style.display = 'flex'; // Use flex as it's a flex container
-                });
+        // --- Navigation Logic ---
+        function showToolScreen(toolId) {
+            hideAllToolScreens();
+            mainGridContainer.style.display = 'none'; // Hide main grid
+            const toolScreen = document.getElementById(toolId);
+            if (toolScreen) {
+                toolScreen.style.display = 'flex'; // Show the specific tool screen
+                currentToolScreen = toolScreen;
+                // Initialize tool if needed (e.g., load saved note)
+                if (toolId === 'notesScreen') loadNote();
+                if (toolId === 'textEditorScreen') loadText();
+                if (toolId === 'unitConverterScreen') updateUnitOptions(); // Initial setup
+                if (toolId === 'colorPickerScreen') setupColorPicker();
+                if (toolId === 'drawingPadScreen') setupCanvas();
+                 if (toolId === 'worldClockScreen') startWorldClocks();
+
+            } else if (toolId === 'fileTransferScreen') {
+                 // Special handling for the separate file transfer screen if kept
+                 document.getElementById('fileTransferScreen').style.display = 'flex';
+                 currentToolScreen = document.getElementById('fileTransferScreen');
+            } else {
+                // Placeholder for non-functional tools
+                const toolItem = document.querySelector(`.tool-item[data-tool-id="${toolId}"]`);
+                const toolName = toolItem ? toolItem.querySelector('.tool-label').textContent : 'Tool';
+                alert(`${toolName} - Functionality not implemented in this demo.`);
+                showMainGrid(); // Go back to grid if tool not found/implemented
             }
+        }
 
-            if (backButton) {
-                backButton.addEventListener('click', () => {
-                    fileTransferScreen.style.display = 'none';
-                    mainScreen.style.display = 'flex'; // Use flex as it's a flex container
-                });
+        function showMainGrid() {
+            hideAllToolScreens();
+             if(currentToolScreen && currentToolScreen.id === 'worldClockScreen') stopWorldClocks(); // Stop clock updates
+            mainGridContainer.style.display = 'block'; // Show main grid
+            currentToolScreen = null;
+        }
+
+        function hideAllToolScreens() {
+            toolScreens.forEach(screen => screen.style.display = 'none');
+            const ftScreen = document.getElementById('fileTransferScreen'); // Also hide file transfer
+            if(ftScreen) ftScreen.style.display = 'none';
+        }
+
+        // Attach event listeners to tool items
+        toolItems.forEach(item => {
+            const toolId = item.getAttribute('data-tool-id');
+            if (toolId) {
+                item.addEventListener('click', () => showToolScreen(toolId + (toolId.endsWith('Tool') ? 'Screen' : ''))); // Append 'Screen' convention
             }
+        });
 
-            // --- Tool Click Alerts (Placeholder) ---
-            const toolItems = document.querySelectorAll('.tool-item');
+        // Attach event listeners to back buttons
+        backButtons.forEach(button => {
+            button.addEventListener('click', showMainGrid);
+        });
 
-            toolItems.forEach(item => {
-                // Don't add alert to the specific navigation items handled above
-                if (item.id !== 'fileTransferTool') {
-                    item.addEventListener('click', () => {
-                        const toolName = item.getAttribute('data-tool-name') || 'Tool';
-                        // Avoid alert for the "+" button if desired
-                        if (toolName !== 'Add Tool') {
-                           alert(`${toolName} clicked! (UI Element Only - Not Functional)`);
-                        } else {
-                             alert(`Add new tool/widget (UI Element Only - Not Functional)`);
-                        }
-                    });
+
+        // --- Tool Specific Functions ---
+
+        // === Calculator ===
+        let calcDisplay = document.getElementById('calcDisplay');
+        let currentInput = '0';
+        let firstOperand = null;
+        let operator = null;
+        let waitingForSecondOperand = false;
+
+        function calcAppend(value) {
+            if (waitingForSecondOperand) {
+                currentInput = value;
+                waitingForSecondOperand = false;
+            } else {
+                currentInput = currentInput === '0' ? value : currentInput + value;
+            }
+            updateCalcDisplay();
+        }
+
+        function updateCalcDisplay() {
+            calcDisplay.textContent = currentInput;
+        }
+
+        function calcClear() {
+            currentInput = '0';
+            firstOperand = null;
+            operator = null;
+            waitingForSecondOperand = false;
+            updateCalcDisplay();
+        }
+         function calcBackspace() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+             waitingForSecondOperand = false; // Allow further typing
+            updateCalcDisplay();
+        }
+
+
+        function performCalculation() {
+            const secondOperand = parseFloat(currentInput);
+            if (operator && firstOperand !== null) {
+                if (operator === '+') firstOperand += secondOperand;
+                else if (operator === '-') firstOperand -= secondOperand;
+                else if (operator === '*') firstOperand *= secondOperand;
+                else if (operator === '/') {
+                    if(secondOperand === 0) return 'Error'; // Divide by zero
+                    firstOperand /= secondOperand;
                 }
+                return firstOperand;
+            }
+            return secondOperand; // Return current number if no operation pending
+        }
+
+        function calcEquals() {
+            const result = performCalculation();
+             if (result === 'Error') {
+                currentInput = 'Error';
+             } else {
+                 currentInput = String(parseFloat(result.toFixed(10))); // Prevent floating point issues and trim trailing zeros implicitly
+             }
+
+            operator = null;
+            // firstOperand remains the result for chained calculations
+            waitingForSecondOperand = true; // Expect new number or operator
+            updateCalcDisplay();
+        }
+
+         // Handle operator clicks
+        document.querySelectorAll('#calculatorScreen .operator').forEach(button => {
+             button.addEventListener('click', () => {
+                 const clickedOperator = button.textContent;
+
+                 if (operator && !waitingForSecondOperand) {
+                    // Perform previous calculation if chaining operators
+                    const result = performCalculation();
+                    if (result === 'Error') {
+                        currentInput = 'Error';
+                        updateCalcDisplay();
+                        operator = null;
+                        firstOperand = null;
+                        waitingForSecondOperand = false;
+                        return;
+                    } else {
+                       currentInput = String(parseFloat(result.toFixed(10)));
+                       firstOperand = result; // Store result for next step
+                    }
+
+                 } else if (firstOperand === null) {
+                     firstOperand = parseFloat(currentInput);
+                 }
+
+                 operator = clickedOperator;
+                 waitingForSecondOperand = true;
+                 updateCalcDisplay(); // Show current input before it's replaced
+             });
+         });
+
+
+        // === Unit Converter ===
+         const ucCategory = document.getElementById('ucCategory');
+         const ucFromUnit = document.getElementById('ucFromUnit');
+         const ucToUnit = document.getElementById('ucToUnit');
+         const ucInputValue = document.getElementById('ucInputValue');
+         const ucResult = document.getElementById('ucResult');
+
+         const units = {
+             length: { 'Meters (m)': 1, 'Kilometers (km)': 1000, 'Centimeters (cm)': 0.01, 'Millimeters (mm)': 0.001, 'Miles (mi)': 1609.34, 'Yards (yd)': 0.9144, 'Feet (ft)': 0.3048, 'Inches (in)': 0.0254 },
+             weight: { 'Kilograms (kg)': 1, 'Grams (g)': 0.001, 'Milligrams (mg)': 0.000001, 'Pounds (lb)': 0.453592, 'Ounces (oz)': 0.0283495 },
+             temperature: { 'Celsius (°C)': 'c', 'Fahrenheit (°F)': 'f', 'Kelvin (K)': 'k' } // Special handling for temp
+         };
+
+         function updateUnitOptions() {
+             const category = ucCategory.value;
+             const unitMap = units[category];
+             ucFromUnit.innerHTML = '';
+             ucToUnit.innerHTML = '';
+             for (const unitName in unitMap) {
+                 ucFromUnit.add(new Option(unitName, unitName));
+                 ucToUnit.add(new Option(unitName, unitName));
+             }
+             // Set different default units if needed
+             if (category === 'length') ucToUnit.value = 'Feet (ft)';
+             else if (category === 'weight') ucToUnit.value = 'Pounds (lb)';
+             else if (category === 'temperature') ucToUnit.value = 'Fahrenheit (°F)';
+             convertUnits(); // Recalculate on category change
+         }
+
+         function convertUnits() {
+             const category = ucCategory.value;
+             const fromUnitName = ucFromUnit.value;
+             const toUnitName = ucToUnit.value;
+             const value = parseFloat(ucInputValue.value);
+
+             if (isNaN(value)) {
+                 ucResult.textContent = "Result: -";
+                 return;
+             }
+
+             let resultValue;
+             const unitMap = units[category];
+
+             if (category === 'temperature') {
+                 const fromType = unitMap[fromUnitName];
+                 const toType = unitMap[toUnitName];
+
+                 if (fromType === toType) {
+                     resultValue = value;
+                 } else if (fromType === 'c') {
+                     resultValue = (toType === 'f') ? (value * 9/5) + 32 : value + 273.15;
+                 } else if (fromType === 'f') {
+                     resultValue = (toType === 'c') ? (value - 32) * 5/9 : (value - 32) * 5/9 + 273.15;
+                 } else { // fromType === 'k'
+                     resultValue = (toType === 'c') ? value - 273.15 : (value - 273.15) * 9/5 + 32;
+                 }
+             } else {
+                 // Length & Weight (base unit is Meter/Kilogram)
+                 const fromFactor = unitMap[fromUnitName];
+                 const toFactor = unitMap[toUnitName];
+                 resultValue = (value * fromFactor) / toFactor;
+             }
+
+             ucResult.textContent = `Result: ${resultValue.toFixed(4)} ${toUnitName.split(' ')[1] || ''}`;
+         }
+
+         // Add event listeners for unit converter dropdowns
+         ucFromUnit.addEventListener('change', convertUnits);
+         ucToUnit.addEventListener('change', convertUnits);
+
+
+        // === Timer ===
+        let timerInterval = null;
+        let timerSecondsLeft = 0;
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerH = document.getElementById('timerHours');
+        const timerM = document.getElementById('timerMinutes');
+        const timerS = document.getElementById('timerSeconds');
+        const timerStartBtn = document.getElementById('timerStartBtn');
+        const timerStopBtn = document.getElementById('timerStopBtn');
+
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+             timerDisplay.textContent = formatTime(timerSecondsLeft);
+             if (timerSecondsLeft <= 0) {
+                 timerDisplay.textContent = "00:00:00"; // Show 00:00:00 when done
+             }
+         }
+
+        function startTimer() {
+            if (timerInterval) return; // Already running
+
+            const h = parseInt(timerH.value) || 0;
+            const m = parseInt(timerM.value) || 0;
+            const s = parseInt(timerS.value) || 0;
+             // Use current display time if timer was stopped and restarted
+             if (timerSecondsLeft <= 0) {
+                timerSecondsLeft = (h * 3600) + (m * 60) + s;
+             }
+
+
+            if (timerSecondsLeft <= 0) return; // No time set
+
+             timerStartBtn.style.display = 'none';
+             timerStopBtn.style.display = 'inline-block';
+            document.querySelector('#timerScreen .time-input').style.display = 'none'; // Hide input
+
+            updateTimerDisplay(); // Show initial time immediately
+
+            timerInterval = setInterval(() => {
+                timerSecondsLeft--;
+                updateTimerDisplay();
+                if (timerSecondsLeft <= 0) {
+                    stopTimer();
+                    alert("Timer Finished!");
+                    // Optionally reset here or leave it at 00:00:00
+                    resetTimer();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+             timerStartBtn.textContent = 'Resume'; // Change button text
+             timerStartBtn.style.display = 'inline-block';
+             timerStopBtn.style.display = 'none';
+        }
+
+        function resetTimer() {
+            stopTimer();
+            timerSecondsLeft = 0;
+             timerStartBtn.textContent = 'Start';
+             timerDisplay.textContent = "00:00:00"; // Reset display
+             document.querySelector('#timerScreen .time-input').style.display = 'block'; // Show input
+            timerH.value = 0; timerM.value = 5; timerS.value = 0; // Reset inputs to default
+             timerDisplay.textContent = formatTime((parseInt(timerH.value||0)*3600) + (parseInt(timerM.value||0)*60) + (parseInt(timerS.value||0))); // Show default time
+        }
+
+
+        // === Stopwatch ===
+        let swInterval = null;
+        let swStartTime = 0;
+        let swElapsedTime = 0;
+        let swRunning = false;
+        let lapCounter = 1;
+        const swDisplay = document.getElementById('stopwatchDisplay');
+        const swStartBtn = document.getElementById('swStartBtn');
+        const swStopBtn = document.getElementById('swStopBtn');
+         const swLapBtn = document.getElementById('swLapBtn');
+        const lapsList = document.getElementById('laps');
+
+        function formatStopwatchTime(milliseconds) {
+             let totalSeconds = Math.floor(milliseconds / 1000);
+             let hours = Math.floor(totalSeconds / 3600);
+             let minutes = Math.floor((totalSeconds % 3600) / 60);
+             let seconds = totalSeconds % 60;
+             let ms = Math.floor((milliseconds % 1000) / 100); // Tenths of a second
+             return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${ms}`;
+         }
+
+        function updateStopwatchDisplay() {
+            const currentTime = swRunning ? Date.now() : swStartTime; // Use current time if running, else frozen start time
+             const displayTime = swElapsedTime + (swRunning ? currentTime - swStartTime : 0);
+             swDisplay.textContent = formatStopwatchTime(displayTime);
+         }
+
+        function startStopwatch() {
+             if (!swRunning) {
+                 swStartTime = Date.now();
+                 swInterval = setInterval(updateStopwatchDisplay, 100); // Update every 100ms
+                 swRunning = true;
+                 swStartBtn.style.display = 'none';
+                 swStopBtn.style.display = 'inline-block';
+                 swLapBtn.disabled = false;
+             }
+         }
+
+         function stopStopwatch() {
+             if (swRunning) {
+                 clearInterval(swInterval);
+                 swElapsedTime += Date.now() - swStartTime; // Add elapsed time since last start
+                 swRunning = false;
+                 swStartBtn.style.display = 'inline-block';
+                 swStartBtn.textContent = 'Resume';
+                 swStopBtn.style.display = 'none';
+                 swLapBtn.disabled = true; // Disable lap when stopped
+             }
+         }
+
+         function resetStopwatch() {
+             stopStopwatch(); // Ensure timer is stopped
+             swElapsedTime = 0;
+             swStartTime = 0; // Reset start time
+             lapCounter = 1;
+             lapsList.innerHTML = '';
+             swDisplay.textContent = formatStopwatchTime(0);
+              swStartBtn.textContent = 'Start';
+             swLapBtn.disabled = true; // Disable lap when reset
+         }
+
+         function lapStopwatch() {
+             if (swRunning) {
+                 const lapTime = swElapsedTime + (Date.now() - swStartTime);
+                 const li = document.createElement('li');
+                 li.textContent = `Lap ${lapCounter++}: ${formatStopwatchTime(lapTime)}`;
+                 lapsList.prepend(li); // Add new lap at the top
+             }
+         }
+
+        // === Notes ===
+         const noteArea = document.getElementById('noteArea');
+         const noteStatus = document.getElementById('noteStatus');
+
+         function saveNote() {
+             localStorage.setItem('simpleNote', noteArea.value);
+             noteStatus.textContent = 'Note saved successfully!';
+             setTimeout(() => noteStatus.textContent = '', 2000); // Clear status after 2s
+         }
+         function loadNote() {
+             const savedNote = localStorage.getItem('simpleNote');
+             if (savedNote !== null) {
+                 noteArea.value = savedNote;
+             }
+         }
+         function clearNote() {
+             noteArea.value = '';
+             localStorage.removeItem('simpleNote');
+              noteStatus.textContent = 'Note cleared.';
+              setTimeout(() => noteStatus.textContent = '', 2000);
+         }
+
+          // === QR Generator (Placeholder) ===
+         const qrInputText = document.getElementById('qrInputText');
+         const qrCodeOutput = document.getElementById('qrCodeOutput');
+         function generateQRCode() {
+             const text = qrInputText.value.trim();
+             if (text) {
+                 // In a real scenario, you'd use a library like qrcode.js here
+                 // For this demo, we just show the text
+                 qrCodeOutput.textContent = `(Placeholder: QR Code for "${text}" would be generated here)`;
+                 // Example using a library (if you include one):
+                 // qrCodeOutput.innerHTML = ''; // Clear previous
+                 // new QRCode(qrCodeOutput, text);
+             } else {
+                 qrCodeOutput.textContent = 'Please enter text or URL to generate QR code.';
+             }
+         }
+
+         // === Days Counter ===
+         const dcStartDate = document.getElementById('dcStartDate');
+         const dcEndDate = document.getElementById('dcEndDate');
+         const dcResult = document.getElementById('dcResult');
+         function calculateDays() {
+             const start = dcStartDate.value;
+             const end = dcEndDate.value;
+             if (start && end) {
+                 const date1 = new Date(start);
+                 const date2 = new Date(end);
+                 const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+                 const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                 dcResult.textContent = `Result: ${diffDays} day(s)`;
+             } else {
+                 dcResult.textContent = 'Result: Please select both dates.';
+             }
+         }
+          // Set default dates
+          dcEndDate.valueAsDate = new Date();
+          let oneMonthAgo = new Date();
+          oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+          dcStartDate.valueAsDate = oneMonthAgo;
+
+
+         // === Random Number Generator ===
+         const randMin = document.getElementById('randMin');
+         const randMax = document.getElementById('randMax');
+         const randResult = document.getElementById('randResult');
+         function generateRandom() {
+             const min = parseInt(randMin.value);
+             const max = parseInt(randMax.value);
+             if (isNaN(min) || isNaN(max) || min > max) {
+                 randResult.textContent = 'Invalid range';
+                 return;
+             }
+             const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+             randResult.textContent = randomNum;
+         }
+
+        // === BMI Calculator ===
+         const bmiHeight = document.getElementById('bmiHeight');
+         const bmiWeight = document.getElementById('bmiWeight');
+         const bmiResult = document.getElementById('bmiResult');
+         function calculateBMI() {
+             const height = parseFloat(bmiHeight.value);
+             const weight = parseFloat(bmiWeight.value);
+             if (height > 0 && weight > 0) {
+                 const heightInMeters = height / 100;
+                 const bmi = weight / (heightInMeters * heightInMeters);
+                 let category = '';
+                 if (bmi < 18.5) category = 'Underweight';
+                 else if (bmi < 24.9) category = 'Normal weight';
+                 else if (bmi < 29.9) category = 'Overweight';
+                 else category = 'Obesity';
+                 bmiResult.textContent = `Result: ${bmi.toFixed(1)} (${category})`;
+             } else {
+                 bmiResult.textContent = 'Result: Please enter valid height and weight.';
+             }
+         }
+
+         // === Password Generator ===
+         const passLength = document.getElementById('passLength');
+         const passUpper = document.getElementById('passUpper');
+         const passLower = document.getElementById('passLower');
+         const passNumbers = document.getElementById('passNumbers');
+         const passSymbols = document.getElementById('passSymbols');
+         const passOutput = document.getElementById('passOutput');
+
+         function generatePassword() {
+             const length = parseInt(passLength.value);
+             const includeUpper = passUpper.checked;
+             const includeLower = passLower.checked;
+             const includeNumbers = passNumbers.checked;
+             const includeSymbols = passSymbols.checked;
+
+             const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+             const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
+             const numberChars = '0123456789';
+             const symbolChars = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
+
+             let allChars = '';
+             if (includeUpper) allChars += upperChars;
+             if (includeLower) allChars += lowerChars;
+             if (includeNumbers) allChars += numberChars;
+             if (includeSymbols) allChars += symbolChars;
+
+             if (allChars === '' || length < 4) {
+                 passOutput.value = 'Select options & length >= 4';
+                 return;
+             }
+
+             let password = '';
+             for (let i = 0; i < length; i++) {
+                 const randomIndex = Math.floor(Math.random() * allChars.length);
+                 password += allChars[randomIndex];
+             }
+             passOutput.value = password;
+         }
+         function copyPassword() {
+             if(passOutput.value && passOutput.value !== 'Select options & length >= 4') {
+                 passOutput.select();
+                 try {
+                     document.execCommand('copy');
+                     alert('Password copied to clipboard!');
+                 } catch (err) {
+                     alert('Failed to copy password.');
+                 }
+             }
+         }
+
+
+        // === Color Picker ===
+        const colorPickerInput = document.getElementById('colorPickerInput');
+        const colorValueDisplay = document.getElementById('colorValueDisplay');
+        function setupColorPicker() {
+            colorValueDisplay.textContent = colorPickerInput.value; // Initial display
+            colorPickerInput.addEventListener('input', () => {
+                colorValueDisplay.textContent = colorPickerInput.value;
+                 // Optional: Change background of the tool content?
+                 // document.getElementById('colorPickerScreen').querySelector('.tool-content').style.backgroundColor = colorPickerInput.value;
             });
+        }
 
-             // --- Make header menu icon clickable (optional alert) ---
-            const menuIcon = document.querySelector('.header-menu-icon');
-            if(menuIcon) {
-                menuIcon.addEventListener('click', () => {
-                    alert('Menu clicked! (Not Implemented)');
-                });
-            }
-            // --- Make section edit icon clickable (optional alert) ---
-            const editIcon = document.querySelector('.section-edit-icon');
-            if(editIcon) {
-                editIcon.addEventListener('click', () => {
-                    alert('Edit Instant Tools clicked! (Not Implemented)');
-                });
-            }
-             // --- Make history icon clickable (optional alert) ---
-            const historyIcon = document.querySelector('.history-icon');
-             if(historyIcon) {
-                historyIcon.addEventListener('click', () => {
-                    alert('History clicked! (Not Implemented)');
-                });
-            }
+        // === Simple Text Editor ===
+         const textEditorArea = document.getElementById('textEditorArea');
+         const textEditorStatus = document.getElementById('textEditorStatus');
+         function saveText() {
+             localStorage.setItem('simpleTextEditorContent', textEditorArea.value);
+             textEditorStatus.textContent = 'Text saved.';
+             setTimeout(() => textEditorStatus.textContent = '', 2000);
+         }
+          function loadText() {
+             const savedText = localStorage.getItem('simpleTextEditorContent');
+              if (savedText !== null) {
+                 textEditorArea.value = savedText;
+                 textEditorStatus.textContent = 'Text loaded.';
+                 setTimeout(() => textEditorStatus.textContent = '', 2000);
+              } else {
+                 textEditorStatus.textContent = 'No saved text found.';
+                 setTimeout(() => textEditorStatus.textContent = '', 2000);
+              }
+         }
+          function clearText() {
+             textEditorArea.value = '';
+             localStorage.removeItem('simpleTextEditorContent');
+             textEditorStatus.textContent = 'Text cleared.';
+             setTimeout(() => textEditorStatus.textContent = '', 2000);
+         }
 
+
+        // === Basic Drawing Pad ===
+         let canvas, ctx, painting = false;
+         function setupCanvas() {
+             canvas = document.getElementById('drawingCanvas');
+             ctx = canvas.getContext('2d');
+             ctx.lineWidth = 3;
+             ctx.lineCap = 'round';
+
+             canvas.addEventListener('mousedown', startPosition);
+             canvas.addEventListener('mouseup', endPosition);
+             canvas.addEventListener('mousemove', draw);
+             // Basic touch support
+              canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(getTouchPos(canvas, e)); });
+             canvas.addEventListener('touchend', (e) => { e.preventDefault(); endPosition(); });
+             canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(getTouchPos(canvas, e)); });
+         }
+         function startPosition(e) {
+            painting = true;
+            draw(e); // Draw a dot on click/touch start
+         }
+         function endPosition() {
+            painting = false;
+            ctx.beginPath(); // Reset path
+         }
+          function getMousePos(canvas, evt) {
+             const rect = canvas.getBoundingClientRect();
+             return {
+               x: evt.clientX - rect.left,
+               y: evt.clientY - rect.top
+             };
+          }
+         function getTouchPos(canvas, evt) {
+             const rect = canvas.getBoundingClientRect();
+             return {
+                x: evt.touches[0].clientX - rect.left,
+                y: evt.touches[0].clientY - rect.top
+             };
+         }
+
+         function draw(e) {
+             if (!painting) return;
+             let pos;
+             if (e.touches) pos = getTouchPos(canvas, e); // Handle touch event structure
+             else pos = getMousePos(canvas, e);          // Handle mouse event structure
+
+
+             ctx.lineTo(pos.x, pos.y);
+             ctx.stroke();
+             ctx.beginPath(); // Start new path segment
+             ctx.moveTo(pos.x, pos.y);
+         }
+         function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+         }
+
+         // === World Clock ===
+          let clockInterval = null;
+          const timezones = { // Using IANA timezone names
+              London: 'Europe/London',
+              NewYork: 'America/New_York',
+              Tokyo: 'Asia/Tokyo',
+              Sydney: 'Australia/Sydney'
+          };
+          function updateWorldClocks() {
+              const now = new Date();
+              for (const city in timezones) {
+                  const displayEl = document.getElementById(`clockDisplay${city}`);
+                  if (displayEl) {
+                      try {
+                           const cityTime = now.toLocaleTimeString('en-US', { timeZone: timezones[city], hour12: true, hour: 'numeric', minute: '2-digit' });
+                           displayEl.textContent = `${city.replace(/([A-Z])/g, ' $1').trim()}: ${cityTime}`; // Add space before capital letters
+                      } catch (error) {
+                           displayEl.textContent = `${city.replace(/([A-Z])/g, ' $1').trim()}: Error loading timezone`;
+                           console.error("Timezone error:", error);
+                      }
+
+                  }
+              }
+          }
+          function startWorldClocks() {
+              if(clockInterval) return; // Already running
+              updateWorldClocks(); // Initial update
+              clockInterval = setInterval(updateWorldClocks, 10000); // Update every 10 seconds
+          }
+         function stopWorldClocks() {
+              clearInterval(clockInterval);
+              clockInterval = null;
+          }
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+             showMainGrid(); // Start by showing the main grid
+             // Set default calculator display
+             updateCalcDisplay();
+             // Set default unit converter options
+             updateUnitOptions();
+              // Set default timer display
+              resetTimer();
+              // Set default stopwatch display
+              resetStopwatch();
 
         });
+
     </script>
 
 </body>
